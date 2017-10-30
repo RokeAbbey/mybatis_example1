@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.SpittleMapper">
+    <select id="getSpittleByOwner" parameterType="Spitter" resultMap="spittleResultMap">
+        select * from spittles where oowner = #{username}
+    </select>
+    <resultMap id="spittleResultMap" type="Spittle">
+        <id property="id" column="id" javaType="int"/>
+        <result property="context" column="context"/>
+        <result property="date" column="ddate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <!--<result property="owner" column="oowner" javaType="Spitter" jdbcType="VARCHAR"/>-->
+        <association property="owner" column="oowner" select="mappers.SpitterMapper.getOne" javaType="Spitter"
+                     jdbcType="VARCHAR" typeHandler="typehandler.SpitterTypeHandler"/>
+            <!--<id property="username" column="username" javaType="String" jdbcType="VARCHAR"/>-->
+            <!--<result property="password" column="password" javaType="String" jdbcType="VARCHAR"/>-->
+            <!--<result property="firstname" column="firstname" javaType="String" jdbcType="VARCHAR"/>-->
+            <!--<result property="lastname" column="lastname" javaType="String" jdbcType="VARCHAR"/>-->
+            <!--<result property="email" column="email" javaType="String" jdbcType="VARCHAR"/>-->
+    </resultMap>
+    <!--<insert id="addSpittleToSpitter" parameterType="Spittle" useGeneratedKeys="true" keyProperty="id">-->
+        <!--insert into spittles (context, oowner, ddate) values(#{context}, #{owner, javaType=Spitter, jdbcType=VARCHAR}, #{date})-->
+    <!--</insert>-->
+    <!--<insert id="addSpittleToSpitter" parameterType="Spittle" useGeneratedKeys="true" keyProperty="id">-->
+        <!--insert into spittles(-->
+          <!--<include refid="spittleColumns">-->
+              <!--<property name="spittle" value="spittles"/>-->
+          <!--</include>-->
+        <!--)-->
+        <!--values (#{context}, #{owner, javaType=Spitter, jdbcType=VARCHAR}, #{date})-->
+    <!--</insert>-->
+    <!--
+    -->
+    <insert id="addSpittleToSpitter" parameterType="Spittle" useGeneratedKeys="true" keyProperty="id">
+        <include refid="spittleInsertTemlate">
+            <property name="tablename" value="spittles"/>
+            <property name="spittle" value="spittles"/>
+
+        </include>
+    </insert>
+    <insert id="addSpittlesToSpitter" parameterType="Collection" useGeneratedKeys="true" keyProperty="id">
+        insert into spittles (context, oowner, ddate)
+        values
+                <foreach collection="spittles" item="spittle" separator=",">
+                    (#{spittle.context}, #{spittle.owner, typeHandler=typehandler.SpitterTypeHandler}, #{spittle.date})
+                </foreach>
+    </insert>
+    <sql id="spittleColumns" >
+        ${spittle}.context, ${spittle}.oowner, ${spittle}.ddate
+    </sql>
+
+    <sql id="spittleInsertTemlate">
+        insert into ${tablename}
+        (<include refid="spittleColumns">
+            <property name="spittle" value="spittles"/>
+        </include>)
+        values (#{context}, #{owner, javaType=Spitter, jdbcType=VARCHAR, typeHandler=typehandler.SpitterTypeHandler}, #{date})
+    </sql>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.SpitterMapper">
+
+    <cache size="1024" eviction="LRU" readOnly="true"/>
+    <select id="getOne" parameterType="String" useCache="true" resultMap="spitterResultMap" >
+        select * from spitters where username = #{username}
+    </select>
+    <select id="getListsByName" resultMap="spitterResultMap">
+        select * from spitters where firstname=#{arg0} AND lastname=#{arg1}
+    </select>
+    <resultMap id="spitterResultMap" type="Spitter">
+        <id property="username" column="username" javaType="String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="String" jdbcType="VARCHAR"/>
+        <result property="firstname" column="firstname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="lastname" column="lastname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="email" column="email" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.UserMapper">
+
+    <select id="getUser" parameterType="int"  resultMap="UserResultMap" useCache="true">
+        SELECT * FROM users WHERE id=#{id}
+
+    </select>
+    <insert id="insertUser" parameterType="User">
+        INSERT  INTO users VALUES (#{id}, #{username}, #{password}, #{parents, javaType=List, jdbcType=VARCHAR},
+        #{favorate, javaType=roles.elements.SexPartner, jdbcType=VARCHAR})
+        <!--parametype可以不显示指定, 反正是通过反射去查找是否有这个属性的 -->
+    </insert>
+    <resultMap id="UserResultMap" type="User">
+        <id column="id" property="id"/>
+        <!--<result column="parents" property="parents" javaType="List" jdbcType="VARCHAR"/>-->
+        <result column="parents" property="parents" javaType="List" jdbcType="VARCHAR" typeHandler="typehandler.ExampleTypeHandler"/>
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="favorate" property="favorate" javaType="roles.elements.SexPartner" jdbcType="VARCHAR"/>
+    </resultMap>
+    <cache readOnly="true" eviction="LRU" size="1024"/>
+</mapper>

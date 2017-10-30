@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <properties resource="config.properties">
+        <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/>
+        <property name="username" value="root"/>
+        <!--<property name="password" value="chen2750656751"/>-->
+    </properties>
+
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="roles.User" alias="User"/>
+        <typeAlias type="roles.Spitter" alias="Spitter"/>
+        <typeAlias type="roles.Spittle" alias="Spittle"/>
+    </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="typehandler.ExampleTypeHandler" javaType="List" jdbcType="VARCHAR"/>
+        <!--上述的javaType 与 mapper.xml那边insert以及resultmap对应的相关-->
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="roles.elements.SexPartner" jdbcType="VARCHAR"/>
+        <!--typeHandler若不标明jdbctype的话 会去相应的handler的类上寻找jdbctype相关的注解(MappedJdbcType), 可以见源码TypeHandlerRegistry.register(x,x)-->
+
+        <!--<typeHandler handler="typehandler.SpitterTypeHandler" />-->
+        <!--<typeHandler handler="typehandler.ObjectHandler"/>-->
+        <typeHandler handler="typehandler.SpitterTypeHandler" jdbcType="VARCHAR"/>
+    </typeHandlers>
+    <objectFactory type="objectfactory.ExampleObjectFactory">
+        <property name="ofactory" value="100"/>
+    </objectFactory>
+    <plugins>
+        <plugin interceptor="interceptors.MyInterceptor1">
+            <property name="prop1" value="hello1"/>
+        </plugin>
+    </plugins>
+    <environments default="development">
+        <environment id="development"> <!--从源码来看 可以有多个enviroment -->
+            <transactionManager type="JDBC"/> <!-- JDBC 事务管理的代码可以参考JdbcTransactionFactory 与 JdbcTransaction-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password:chen2750656751}"/>
+            </dataSource>
+        </environment>
+
+        <environment id="spittr">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="${spittr.driver}"/>
+                <property name="url" value="${spittr.url}"/>
+                <property name="username" value="${spittr.username}"/>
+                <property name="password" value="${spittr.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mappers1/UserMapper.xml"/>
+        <mapper resource="mappers1/spittr/SpitterMapper.xml"/>
+        <mapper resource="mappers1/spittr/SpittleMapper.xml"/>
+    </mappers>
+
+</configuration>
